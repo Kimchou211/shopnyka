@@ -2011,7 +2011,7 @@ const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 const SRV = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
   ? 'http://localhost:5000'
-  : 'https://choushop-main.vercel.app'; // ប្តូរទៅកាន់ Vercel URL បើមិនប្រើ Railway
+  : 'https://your-api-backend.com'; // ⚠️ កែប្រែ URL នេះទៅតាម Domain Backend របស់អ្នក (ឧទាហរណ៍៖ Railway ឬ Cloudflare Worker)
 
 // ── STATE ──────────────────────────────────────────
 let PRODS = [];
