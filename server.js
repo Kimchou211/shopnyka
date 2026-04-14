@@ -15,18 +15,18 @@ const app = express();
 
 // ─── CONFIG ──────────────────────────────────────────────────
 const BAKONG = {
-  token   : process.env.BAKONG_TOKEN || "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhIjp7ImlkIjoiOGEwZDkzMTc2ZTA2NDNhYiJ9LCJpYXQiOjE3NzYwNzI2NTIsImV4cCI6MTc4Mzg0ODY1Mn0.zfEAZZFvMzp5BVmLpvkzBPpaDLoRkVKeRxv_LDySi7M",
-  account : process.env.BAKONG_ACCOUNT || "kimchou_kren@bkrt",
-  merchant: process.env.BAKONG_MERCHANT || "NyKa_Shop",
-  city    : process.env.BAKONG_CITY || "Kampong Chhnang",
+  token   : process.env.BAKONG_TOKEN,
+  account : process.env.BAKONG_ACCOUNT,
+  merchant: process.env.BAKONG_MERCHANT,
+  city    : process.env.BAKONG_CITY,
   country : "KH"
 };
 const TG = {
-  token  : process.env.TG_TOKEN || "8504509149:AAGLc8ZLaV9ZI1CWGx1V-PRQjMNY88ubm2g",
-  chat_id: process.env.TG_CHAT_ID || "8061490786",
-  contact: process.env.TG_CONTACT || "https://t.me/krenkimchou"
+  token  : process.env.TG_TOKEN,
+  chat_id: process.env.TG_CHAT_ID,
+  contact: process.env.TG_CONTACT
 };
-const JWT_SECRET = process.env.JWT_SECRET || 'nyka_shop_2025_secret';
+const JWT_SECRET = process.env.JWT_SECRET;
 const PORT       = process.env.PORT       || 5000;
 
 // ─── MIDDLEWARE ───────────────────────────────────────────────
@@ -35,7 +35,7 @@ app.use(cors({
   methods: ['GET','POST','PUT','DELETE','OPTIONS','PATCH'],
   allowedHeaders: ['Content-Type','Authorization']
 }));
-app.options('/{*path}', cors()); // pre-flight
+app.options('*', cors()); // ជួយឱ្យគ្រប់ requests ទាំងអស់ដើរបានល្អ (Pre-flight)
 // Increase limit for base64 images
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ extended: true, limit: '50mb' }));
@@ -44,8 +44,12 @@ app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 let db;
 async function initDB() {
   try {
-    if (!process.env.DATABASE_URL) {
-      throw new Error('DATABASE_URL is not defined. Check your .env file.');
+    const dbUrl = process.env.DATABASE_URL;
+    if (!dbUrl) {
+      console.error('❌ Critical Error: DATABASE_URL is missing in environment variables.');
+      console.log('⚠️ Warning: Backend is running without a functional database.');
+      db = null;
+      return;
     }
 
     console.log('⏳ Connecting to Supabase...');
@@ -62,8 +66,7 @@ async function initDB() {
     await seedAdmin();
     console.log('✅ Database ready');
   } catch(e) {
-    console.error('❌ DB CONNECTION ERROR:', e.message);
-    console.log('⚠️  Warning: Backend is running without a functional database.');
+    console.error('❌ DATABASE CONNECTION FAILED:', e.message);
     // កំណត់ db ជា null ដើម្បីឱ្យ Route ផ្សេងៗប្រាប់ថា "DB not connected"
     db = null;
   }
