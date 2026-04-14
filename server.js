@@ -1,16 +1,20 @@
 // ════════════════════════════════════════════════════════════
-//  server.js  —  NyKa Shop  Complete Backend  v4.0
-//  MySQL · JWT Auth · Bakong KHQR · Telegram · Products DB
+//  server.js  —  NyKa Shop  Complete Backend  v4.1
+//  PostgreSQL · JWT Auth · Bakong KHQR · Telegram · Products
 // ════════════════════════════════════════════════════════════
-const { Hono } = require('hono');
-const { cors } = require('hono/cors');
+const express = require('express');
+const cors    = require('cors');
 const { Pool } = require('pg');
 const bcrypt  = require('bcryptjs');
 const jwt     = require('jsonwebtoken');
 const QRCode  = require('qrcode');
 const crypto  = require('crypto');
 
-const app = new Hono();
+const app = express();
+
+// ─── BODY PARSER ─────────────────────────────────────────────
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ extended: true }));
 
 // ─── CONFIG ──────────────────────────────────────────────────
 const BAKONG = {
@@ -28,13 +32,15 @@ const TG = {
 const JWT_SECRET = process.env.JWT_SECRET;
 const PORT       = process.env.PORT       || 5000;
 
-// ─── MIDDLEWARE ───────────────────────────────────────────────
-app.use('*', cors({
-  origin: ['https://shopnyka.pages.dev', 'http://localhost:5000'],
-  allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowHeaders: ['Content-Type', 'Authorization'],
+// ─── CORS ────────────────────────────────────────────────────
+app.use(cors({
+  origin: ['https://shopnyka.pages.dev', 'http://localhost:5000', 'http://localhost:3000'],
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true,
 }));
+// Explicitly handle all OPTIONS preflight requests
+app.options('*', cors());
 
 // ─── DATABASE ─────────────────────────────────────────────────
 let db;
