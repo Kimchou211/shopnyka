@@ -1029,7 +1029,7 @@ select.fi option{background:var(--bg3)}
 <script>
 'use strict';
 
-const SRV = window.location.hostname === 'localhost' ? 'http://localhost:5000' : 'https://choushop-api.up.railway.app';
+const SRV = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') ? 'http://localhost:5000' : 'https://choushop-api.up.railway.app';
 
 let adminToken = null;
 let adminUser  = null;
