@@ -1,0 +1,1158 @@
+<!DOCTYPE html>
+<html lang="km">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>NyKa Shop — My Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;0,800;1,700&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&family=Kantumruy+Pro:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ─── TOKENS ─────────────────────────────────────────── */
+:root{
+  --rose:#e11d48;--rose-dk:#be123c;--rose-lt:#fb7185;
+  --rose-pale:#fce7f3;--rose-faint:#fff1f5;--rose-glow:rgba(225,29,72,.15);
+  --cream:#fffbf7;--cream2:#fdf6ef;--surf:#ffffff;
+  --bord:#f0e8e8;--bord2:#e2d5d5;
+  --txt:#1a0a0f;--txt2:#7c5c65;--mut:#b89ca2;
+  --gold:#d97706;--green:#059669;--green-bg:#f0fdf4;--green-lt:#dcfce7;
+  --red:#dc2626;--red-bg:#fef2f2;--blue:#2563eb;--blue-bg:#eff6ff;
+  --amber:#d97706;--amber-bg:#fffbeb;
+  --sh-xs:0 1px 3px rgba(180,80,100,.06);
+  --sh-sm:0 2px 8px rgba(180,80,100,.08);
+  --sh-md:0 6px 20px rgba(180,80,100,.10);
+  --sh-lg:0 14px 40px rgba(180,80,100,.12);
+  --sh-rose:0 6px 22px rgba(225,29,72,.28);
+  --r:12px;--r-lg:18px;--r-xl:24px;--r-full:9999px;
+  --font:'DM Sans','Kantumruy Pro',system-ui,sans-serif;
+  --disp:'Playfair Display','Kantumruy Pro',Georgia,serif;
+  --mono:'JetBrains Mono',monospace;
+  --ease:cubic-bezier(.4,0,.2,1);--bounce:cubic-bezier(.34,1.56,.64,1);
+  --sidebar:260px;
+}
+
+/* ─── RESET ──────────────────────────────────────────── */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;font-size:16px}
+body{background:var(--cream);color:var(--txt);font-family:var(--font);
+  line-height:1.6;overflow-x:hidden;min-height:100vh;-webkit-font-smoothing:antialiased}
+a{color:var(--rose);text-decoration:none}
+img{max-width:100%;display:block}
+button{font-family:var(--font);cursor:pointer}
+input,select,textarea{font-family:var(--font)}
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:var(--cream2)}
+::-webkit-scrollbar-thumb{background:var(--bord2);border-radius:99px}
+
+/* ─── LAYOUT ─────────────────────────────────────────── */
+.shell{display:flex;min-height:100vh}
+
+/* ─── SIDEBAR ────────────────────────────────────────── */
+.sidebar{
+  width:var(--sidebar);flex-shrink:0;
+  background:var(--surf);
+  border-right:1.5px solid var(--bord);
+  display:flex;flex-direction:column;
+  position:fixed;top:0;left:0;bottom:0;
+  z-index:200;
+  transition:transform .3s var(--ease);
+  overflow-y:auto;
+}
+.sb-top{
+  padding:28px 24px 22px;
+  border-bottom:1px solid var(--bord);
+  flex-shrink:0;
+}
+.sb-logo{
+  font-family:var(--disp);font-size:1.25rem;font-weight:700;color:var(--txt);
+  letter-spacing:-.02em;display:flex;align-items:center;gap:5px;margin-bottom:18px;
+}
+.sb-logo-dot{color:var(--rose);font-size:1.4rem;line-height:1}
+.sb-avatar{
+  width:52px;height:52px;border-radius:var(--r-full);
+  background:linear-gradient(135deg,var(--rose),var(--rose-lt));
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.2rem;font-weight:700;color:#fff;
+  border:2.5px solid var(--rose-pale);
+  margin-bottom:10px;
+  box-shadow:var(--sh-rose);
+}
+.sb-uname{font-size:.9rem;font-weight:700;color:var(--txt);letter-spacing:-.01em}
+.sb-email{font-size:.72rem;color:var(--mut);margin-top:1px;font-family:var(--mono)}
+.sb-role{
+  display:inline-flex;align-items:center;gap:4px;
+  margin-top:6px;padding:2px 9px;border-radius:var(--r-full);
+  background:var(--rose-faint);color:var(--rose-dk);
+  font-size:.62rem;font-weight:600;font-family:var(--mono);letter-spacing:.04em;
+  border:1px solid var(--rose-pale);
+}
+
+.sb-nav{flex:1;padding:14px 12px}
+.sb-group{margin-bottom:4px}
+.sb-glabel{
+  font-size:.58rem;font-weight:600;letter-spacing:.1em;color:var(--mut);
+  text-transform:uppercase;padding:6px 12px;margin-top:8px;display:block;
+}
+.sb-item{
+  display:flex;align-items:center;gap:11px;
+  padding:10px 14px;border-radius:var(--r);
+  color:var(--txt2);font-size:.85rem;font-weight:500;
+  cursor:pointer;transition:all .15s;position:relative;
+  border:1px solid transparent;
+}
+.sb-item:hover{background:var(--rose-faint);color:var(--rose-dk)}
+.sb-item.active{
+  background:var(--rose-pale);color:var(--rose-dk);font-weight:600;
+  border-color:rgba(225,29,72,.12);
+}
+.sb-item.active::before{
+  content:'';position:absolute;left:0;top:20%;bottom:20%;
+  width:3px;background:var(--rose);border-radius:0 3px 3px 0;
+}
+.sb-ico{width:18px;text-align:center;font-size:1rem;flex-shrink:0}
+.sb-badge{
+  margin-left:auto;min-width:18px;height:18px;padding:0 5px;
+  background:var(--rose);color:#fff;border-radius:var(--r-full);
+  font-size:.6rem;font-weight:700;font-family:var(--mono);
+  display:flex;align-items:center;justify-content:center;
+}
+
+.sb-footer{
+  padding:16px 20px;border-top:1px solid var(--bord);
+  flex-shrink:0;
+}
+.btn-logout{
+  width:100%;padding:10px;background:var(--cream2);
+  border:1.5px solid var(--bord2);border-radius:var(--r);
+  color:var(--txt2);font-size:.8rem;font-weight:600;
+  display:flex;align-items:center;justify-content:center;gap:7px;
+  transition:all .15s;
+}
+.btn-logout:hover{border-color:var(--red);color:var(--red);background:var(--red-bg)}
+
+/* ─── MAIN ───────────────────────────────────────────── */
+.main{
+  margin-left:var(--sidebar);flex:1;min-height:100vh;
+  display:flex;flex-direction:column;
+}
+
+/* ─── TOPBAR ─────────────────────────────────────────── */
+.topbar{
+  height:64px;background:rgba(255,251,247,.96);
+  backdrop-filter:blur(20px);
+  border-bottom:1.5px solid var(--bord);
+  display:flex;align-items:center;padding:0 28px;gap:16px;
+  position:sticky;top:0;z-index:100;
+}
+.topbar-title{
+  font-family:var(--disp);font-size:1.1rem;font-weight:700;
+  color:var(--txt);letter-spacing:-.02em;
+}
+.topbar-sub{font-size:.78rem;color:var(--mut);margin-top:1px}
+.topbar-r{margin-left:auto;display:flex;align-items:center;gap:10px}
+.btn-shop{
+  padding:8px 18px;background:var(--rose);border:none;
+  border-radius:var(--r);color:#fff;font-size:.82rem;font-weight:600;
+  display:flex;align-items:center;gap:6px;
+  transition:all .15s;
+}
+.btn-shop:hover{background:var(--rose-dk);transform:translateY(-1px);box-shadow:var(--sh-rose)}
+.notif-btn{
+  width:38px;height:38px;background:var(--surf);
+  border:1.5px solid var(--bord2);border-radius:var(--r);
+  display:flex;align-items:center;justify-content:center;
+  font-size:1rem;cursor:pointer;transition:all .15s;position:relative;
+}
+.notif-btn:hover{border-color:var(--rose-lt);box-shadow:var(--sh-md)}
+.notif-dot{
+  position:absolute;top:-4px;right:-4px;width:10px;height:10px;
+  background:var(--rose);border-radius:50%;border:2px solid var(--cream);
+  display:none;
+}
+.notif-dot.on{display:block;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.2)}}
+
+/* ─── CONTENT ────────────────────────────────────────── */
+.content{flex:1;padding:28px 32px;max-width:1100px}
+.page{display:none;animation:fadeUp .35s var(--ease)}
+.page.active{display:block}
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+
+/* ─── SECTION HEADER ─────────────────────────────────── */
+.sec-head{margin-bottom:24px}
+.sec-title{
+  font-family:var(--disp);font-size:1.5rem;font-weight:700;
+  color:var(--txt);letter-spacing:-.02em;
+}
+.sec-sub{font-size:.83rem;color:var(--txt2);margin-top:3px}
+
+/* ─── STATS GRID ─────────────────────────────────────── */
+.stats-grid{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));
+  gap:16px;margin-bottom:28px;
+}
+.stat-card{
+  background:var(--surf);border:1.5px solid var(--bord);
+  border-radius:var(--r-lg);padding:20px 22px;
+  transition:all .2s var(--ease);position:relative;overflow:hidden;
+}
+.stat-card::before{
+  content:'';position:absolute;top:-30px;right:-30px;
+  width:90px;height:90px;border-radius:50%;
+  opacity:.07;
+}
+.stat-card.rose::before{background:var(--rose)}
+.stat-card.green::before{background:var(--green)}
+.stat-card.gold::before{background:var(--gold)}
+.stat-card.blue::before{background:var(--blue)}
+.stat-card:hover{border-color:var(--rose-lt);box-shadow:var(--sh-md);transform:translateY(-2px)}
+.stat-ico{
+  width:38px;height:38px;border-radius:var(--r);
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.1rem;margin-bottom:14px;
+}
+.stat-ico.rose{background:var(--rose-faint);color:var(--rose)}
+.stat-ico.green{background:var(--green-bg);color:var(--green)}
+.stat-ico.gold{background:var(--amber-bg);color:var(--amber)}
+.stat-ico.blue{background:var(--blue-bg);color:var(--blue)}
+.stat-val{
+  font-family:var(--mono);font-size:1.6rem;font-weight:600;
+  color:var(--txt);letter-spacing:-.03em;margin-bottom:2px;
+}
+.stat-lbl{font-size:.75rem;color:var(--txt2);font-weight:500}
+
+/* ─── SECTION CARD ───────────────────────────────────── */
+.card{
+  background:var(--surf);border:1.5px solid var(--bord);
+  border-radius:var(--r-lg);overflow:hidden;margin-bottom:20px;
+}
+.card-head{
+  padding:18px 22px;border-bottom:1px solid var(--bord);
+  display:flex;align-items:center;gap:10px;
+}
+.card-head-title{font-size:.95rem;font-weight:700;color:var(--txt)}
+.card-head-sub{font-size:.75rem;color:var(--mut);margin-left:auto}
+.card-body{padding:20px 22px}
+
+/* ─── ORDERS TABLE ───────────────────────────────────── */
+.orders-wrap{overflow-x:auto}
+.orders-table{width:100%;border-collapse:collapse;min-width:580px}
+.orders-table th{
+  font-size:.62rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--mut);font-family:var(--mono);
+  padding:10px 14px;text-align:left;
+  border-bottom:1px solid var(--bord);
+  white-space:nowrap;
+}
+.orders-table td{
+  padding:13px 14px;border-bottom:1px solid var(--bord);
+  font-size:.83rem;vertical-align:middle;
+}
+.orders-table tr:last-child td{border-bottom:none}
+.orders-table tr:hover td{background:var(--rose-faint)}
+
+.order-num{
+  font-family:var(--mono);font-size:.72rem;font-weight:600;
+  color:var(--rose);letter-spacing:.02em;
+}
+.order-items-preview{
+  display:flex;flex-wrap:wrap;gap:4px;
+}
+.order-item-tag{
+  background:var(--cream2);border:1px solid var(--bord);
+  border-radius:6px;padding:2px 8px;font-size:.7rem;color:var(--txt2);
+  white-space:nowrap;
+}
+
+/* STATUS BADGES */
+.badge{
+  display:inline-flex;align-items:center;gap:4px;
+  padding:3px 10px;border-radius:var(--r-full);
+  font-size:.67rem;font-weight:700;font-family:var(--mono);letter-spacing:.04em;
+  white-space:nowrap;
+}
+.badge-pending{background:var(--amber-bg);color:var(--amber);border:1px solid #fde68a}
+.badge-paid{background:var(--green-bg);color:var(--green);border:1px solid #86efac}
+.badge-cancelled{background:var(--red-bg);color:var(--red);border:1px solid #fca5a5}
+.badge-delivered{background:var(--blue-bg);color:var(--blue);border:1px solid #93c5fd}
+.badge-refunded{background:#f5f3ff;color:#7c3aed;border:1px solid #c4b5fd}
+
+.amount-cell{
+  font-family:var(--mono);font-weight:600;color:var(--txt);font-size:.82rem;
+}
+.date-cell{font-size:.72rem;color:var(--mut);font-family:var(--mono)}
+
+.btn-view{
+  padding:5px 12px;background:transparent;
+  border:1.5px solid var(--bord2);border-radius:8px;
+  color:var(--txt2);font-size:.72rem;font-weight:500;
+  transition:all .15s;white-space:nowrap;
+}
+.btn-view:hover{border-color:var(--rose-lt);color:var(--rose);background:var(--rose-faint)}
+
+/* ─── EMPTY STATE ────────────────────────────────────── */
+.empty{
+  padding:48px 20px;text-align:center;
+}
+.empty-ico{font-size:2.5rem;margin-bottom:12px;opacity:.6}
+.empty-title{font-size:1rem;font-weight:600;color:var(--txt);margin-bottom:4px}
+.empty-sub{font-size:.82rem;color:var(--mut)}
+.btn-start{
+  margin-top:18px;display:inline-flex;align-items:center;gap:6px;
+  padding:10px 22px;background:var(--rose);border:none;
+  border-radius:var(--r);color:#fff;font-size:.83rem;font-weight:600;
+  transition:all .15s;
+}
+.btn-start:hover{background:var(--rose-dk);transform:translateY(-1px);box-shadow:var(--sh-rose)}
+
+/* ─── PROFILE FORM ───────────────────────────────────── */
+.profile-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.form-group{display:flex;flex-direction:column;gap:6px}
+.form-group.full{grid-column:1/-1}
+.form-label{
+  font-size:.72rem;font-weight:700;letter-spacing:.06em;
+  text-transform:uppercase;color:var(--txt2);
+}
+.form-input{
+  height:42px;padding:0 14px;background:var(--cream2);
+  border:1.5px solid var(--bord2);border-radius:var(--r);
+  font-size:.85rem;color:var(--txt);outline:none;
+  transition:border-color .15s,box-shadow .15s;
+}
+.form-input:focus{border-color:var(--rose-lt);box-shadow:0 0 0 3px var(--rose-glow)}
+.form-input::placeholder{color:var(--mut)}
+textarea.form-input{height:80px;padding:12px 14px;resize:vertical}
+.form-hint{font-size:.7rem;color:var(--mut)}
+
+.btn-save{
+  padding:11px 28px;background:var(--rose);border:none;
+  border-radius:var(--r);color:#fff;font-size:.85rem;font-weight:600;
+  display:inline-flex;align-items:center;gap:7px;
+  transition:all .15s;
+}
+.btn-save:hover{background:var(--rose-dk);transform:translateY(-1px);box-shadow:var(--sh-rose)}
+.btn-save:disabled{opacity:.5;pointer-events:none}
+
+/* ─── ALERT ──────────────────────────────────────────── */
+.alert{
+  padding:12px 16px;border-radius:var(--r);
+  font-size:.82rem;font-weight:500;margin-bottom:16px;
+  display:none;align-items:center;gap:8px;
+}
+.alert.show{display:flex;animation:slideIn .3s var(--ease)}
+.alert-success{background:var(--green-bg);color:var(--green);border:1px solid #86efac}
+.alert-error{background:var(--red-bg);color:var(--red);border:1px solid #fca5a5}
+@keyframes slideIn{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}
+
+/* ─── WELCOME BANNER ─────────────────────────────────── */
+.welcome-banner{
+  background:linear-gradient(135deg,var(--rose) 0%,#f43f5e 50%,var(--rose-lt) 100%);
+  border-radius:var(--r-xl);padding:28px 32px;color:#fff;
+  margin-bottom:24px;position:relative;overflow:hidden;
+}
+.welcome-banner::before{
+  content:'🌸';position:absolute;right:28px;top:50%;transform:translateY(-50%);
+  font-size:5rem;opacity:.15;
+}
+.welcome-banner::after{
+  content:'';position:absolute;top:-40px;right:100px;
+  width:160px;height:160px;border-radius:50%;
+  background:rgba(255,255,255,.06);
+}
+.wb-hi{font-size:.78rem;font-weight:500;opacity:.8;letter-spacing:.04em;text-transform:uppercase;font-family:var(--mono)}
+.wb-name{font-family:var(--disp);font-size:1.6rem;font-weight:700;margin:4px 0 6px;letter-spacing:-.02em}
+.wb-sub{font-size:.82rem;opacity:.75;max-width:320px}
+.wb-since{
+  display:inline-flex;align-items:center;gap:5px;
+  margin-top:14px;background:rgba(255,255,255,.18);
+  border:1px solid rgba(255,255,255,.3);border-radius:var(--r-full);
+  padding:4px 14px;font-size:.7rem;font-family:var(--mono);
+}
+
+/* ─── RECENT ORDER MINI ───────────────────────────────── */
+.recent-orders{display:flex;flex-direction:column;gap:10px}
+.ro-item{
+  display:flex;align-items:center;gap:14px;
+  padding:12px 16px;background:var(--cream2);
+  border:1px solid var(--bord);border-radius:var(--r);
+  transition:all .15s;cursor:pointer;
+}
+.ro-item:hover{border-color:var(--rose-lt);background:var(--rose-faint)}
+.ro-ico{
+  width:38px;height:38px;background:var(--surf);
+  border:1px solid var(--bord);border-radius:var(--r);
+  display:flex;align-items:center;justify-content:center;font-size:1.1rem;
+  flex-shrink:0;
+}
+.ro-info{flex:1;min-width:0}
+.ro-num{font-family:var(--mono);font-size:.72rem;color:var(--rose);font-weight:600}
+.ro-items{font-size:.8rem;color:var(--txt);font-weight:500;margin-top:1px;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ro-date{font-size:.7rem;color:var(--mut);font-family:var(--mono)}
+.ro-right{text-align:right;flex-shrink:0}
+.ro-amount{font-family:var(--mono);font-size:.9rem;font-weight:700;color:var(--txt)}
+
+/* ─── ORDER DETAIL MODAL ─────────────────────────────── */
+.modal-overlay{
+  position:fixed;inset:0;background:rgba(26,10,15,.5);
+  backdrop-filter:blur(6px);z-index:500;
+  display:none;align-items:center;justify-content:center;padding:20px;
+}
+.modal-overlay.open{display:flex;animation:fadeIn .2s}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.modal{
+  background:var(--surf);border-radius:var(--r-xl);
+  width:100%;max-width:520px;max-height:85vh;overflow-y:auto;
+  box-shadow:var(--sh-lg);animation:scaleIn .25s var(--bounce);
+}
+@keyframes scaleIn{from{opacity:0;transform:scale(.94)}to{opacity:1;transform:scale(1)}}
+.modal-head{
+  padding:22px 24px 18px;border-bottom:1px solid var(--bord);
+  display:flex;align-items:center;gap:12px;position:sticky;top:0;
+  background:var(--surf);z-index:2;
+}
+.modal-title{font-family:var(--disp);font-size:1.1rem;font-weight:700}
+.modal-close{
+  margin-left:auto;width:32px;height:32px;background:var(--cream2);
+  border:1px solid var(--bord2);border-radius:8px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:.9rem;cursor:pointer;transition:all .15s;flex-shrink:0;
+}
+.modal-close:hover{background:var(--red-bg);border-color:var(--red);color:var(--red)}
+.modal-body{padding:20px 24px}
+
+.detail-row{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:9px 0;border-bottom:1px solid var(--bord);
+}
+.detail-row:last-child{border-bottom:none}
+.dl{font-size:.75rem;color:var(--txt2);font-weight:500}
+.dv{font-size:.83rem;font-weight:600;color:var(--txt);text-align:right;font-family:var(--mono)}
+
+.modal-items{margin:16px 0}
+.modal-item-row{
+  display:flex;align-items:center;gap:12px;
+  padding:10px 12px;background:var(--cream2);
+  border:1px solid var(--bord);border-radius:var(--r);margin-bottom:8px;
+}
+.mi-ico{font-size:1.2rem}
+.mi-name{font-size:.83rem;font-weight:600;flex:1}
+.mi-qty{font-size:.72rem;color:var(--txt2);font-family:var(--mono)}
+.mi-price{font-family:var(--mono);font-size:.85rem;font-weight:700;color:var(--rose)}
+
+.modal-total{
+  background:linear-gradient(135deg,var(--rose-faint),var(--rose-pale));
+  border:1px solid rgba(225,29,72,.15);border-radius:var(--r);
+  padding:14px 18px;display:flex;justify-content:space-between;align-items:center;
+  margin-top:10px;
+}
+.mt-lbl{font-size:.85rem;font-weight:600;color:var(--txt2)}
+.mt-val{font-family:var(--mono);font-size:1.4rem;font-weight:700;color:var(--rose)}
+
+.btn-invoice{
+  width:100%;margin-top:14px;padding:12px;background:var(--rose);border:none;
+  border-radius:var(--r);color:#fff;font-size:.85rem;font-weight:600;
+  display:flex;align-items:center;justify-content:center;gap:7px;
+  transition:all .15s;
+}
+.btn-invoice:hover{background:var(--rose-dk);box-shadow:var(--sh-rose)}
+.btn-invoice:disabled{opacity:.4;pointer-events:none}
+
+/* ─── LOADING ────────────────────────────────────────── */
+.loading-wrap{
+  padding:40px;text-align:center;
+}
+.spinner{
+  width:28px;height:28px;border:2.5px solid var(--rose-pale);
+  border-top-color:var(--rose);border-radius:50%;
+  animation:spin .7s linear infinite;margin:0 auto 12px;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading-txt{font-size:.82rem;color:var(--mut)}
+
+/* ─── PASSWORD SECTION ───────────────────────────────── */
+.divider{
+  height:1px;background:var(--bord);margin:22px 0;
+}
+.section-sub-title{
+  font-size:.88rem;font-weight:700;color:var(--txt);margin-bottom:14px;
+  display:flex;align-items:center;gap:6px;
+}
+
+/* ─── MOBILE TOGGLE ──────────────────────────────────── */
+.mob-toggle{
+  display:none;position:fixed;top:14px;left:14px;z-index:300;
+  width:40px;height:40px;background:var(--surf);
+  border:1.5px solid var(--bord2);border-radius:var(--r);
+  align-items:center;justify-content:center;font-size:1.1rem;
+  cursor:pointer;box-shadow:var(--sh-sm);
+}
+.overlay-bg{
+  display:none;position:fixed;inset:0;background:rgba(26,10,15,.4);
+  z-index:150;backdrop-filter:blur(2px);
+}
+
+/* ─── RESPONSIVE ─────────────────────────────────────── */
+@media(max-width:768px){
+  :root{--sidebar:260px}
+  .sidebar{transform:translateX(-100%)}
+  .sidebar.open{transform:translateX(0);box-shadow:var(--sh-lg)}
+  .main{margin-left:0}
+  .mob-toggle{display:flex}
+  .overlay-bg.show{display:block}
+  .content{padding:20px 16px}
+  .topbar{padding:0 16px 0 60px}
+  .profile-grid{grid-template-columns:1fr}
+  .profile-grid .form-group.full{grid-column:1}
+  .stats-grid{grid-template-columns:1fr 1fr}
+}
+@media(max-width:480px){
+  .stats-grid{grid-template-columns:1fr}
+  .welcome-banner{padding:22px 20px}
+  .wb-name{font-size:1.3rem}
+}
+</style>
+</head>
+<body>
+
+<!-- MOBILE TOGGLE -->
+<button class="mob-toggle" id="mobToggle">☰</button>
+<div class="overlay-bg" id="overlayBg"></div>
+
+<div class="shell">
+  <!-- ─── SIDEBAR ─── -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sb-top">
+      <div class="sb-logo"><span class="sb-logo-dot">🌸</span> NyKa Shop</div>
+      <div class="sb-avatar" id="sbAvatar">U</div>
+      <div class="sb-uname" id="sbName">Loading…</div>
+      <div class="sb-email" id="sbEmail">—</div>
+      <span class="sb-role">👤 Member</span>
+    </div>
+
+    <nav class="sb-nav">
+      <span class="sb-glabel">ទំព័រ</span>
+      <div class="sb-item active" data-page="home">
+        <span class="sb-ico">🏠</span> ទំព័រដើម
+      </div>
+      <div class="sb-item" data-page="orders">
+        <span class="sb-ico">📦</span> ការបញ្ជាទិញ
+        <span class="sb-badge" id="orderBadge" style="display:none">0</span>
+      </div>
+
+      <span class="sb-glabel">គណនី</span>
+      <div class="sb-item" data-page="profile">
+        <span class="sb-ico">👤</span> ព័ត៌មានខ្ញុំ
+      </div>
+      <div class="sb-item" data-page="password">
+        <span class="sb-ico">🔐</span> លេខសំងាត់
+      </div>
+    </nav>
+
+    <div class="sb-footer">
+      <button class="btn-logout" onclick="logout()">🚪 ចាកចេញ</button>
+    </div>
+  </aside>
+
+  <!-- ─── MAIN ─── -->
+  <div class="main">
+    <!-- TOPBAR -->
+    <div class="topbar">
+      <div>
+        <div class="topbar-title" id="topbarTitle">ទំព័រដើម</div>
+        <div class="topbar-sub" id="topbarSub">ស្វាគមន៍មកកាន់ NyKa Shop</div>
+      </div>
+      <div class="topbar-r">
+        <div class="notif-btn" title="Notifications">
+          🔔<span class="notif-dot" id="notifDot"></span>
+        </div>
+        <button class="btn-shop" onclick="window.location.href='index.html'">
+          🛍️ ទៅទិញ
+        </button>
+      </div>
+    </div>
+
+    <!-- CONTENT -->
+    <div class="content">
+
+      <!-- ─── HOME PAGE ─── -->
+      <div class="page active" id="page-home">
+        <!-- Welcome Banner -->
+        <div class="welcome-banner">
+          <div class="wb-hi">Welcome back</div>
+          <div class="wb-name" id="wbName">Loading…</div>
+          <div class="wb-sub">ពិនិត្យការបញ្ជាទិញ និង គ្រប់គ្រងគណនីរបស់អ្នក</div>
+          <div class="wb-since">📅 Member since <span id="wbSince">—</span></div>
+        </div>
+
+        <!-- Stats -->
+        <div class="stats-grid">
+          <div class="stat-card rose">
+            <div class="stat-ico rose">📦</div>
+            <div class="stat-val" id="statTotal">—</div>
+            <div class="stat-lbl">ការបញ្ជាទិញសរុប</div>
+          </div>
+          <div class="stat-card green">
+            <div class="stat-ico green">✅</div>
+            <div class="stat-val" id="statPaid">—</div>
+            <div class="stat-lbl">បានបង់ប្រាក់</div>
+          </div>
+          <div class="stat-card gold">
+            <div class="stat-ico gold">⏳</div>
+            <div class="stat-val" id="statPending">—</div>
+            <div class="stat-lbl">កំពុងរង់ចាំ</div>
+          </div>
+          <div class="stat-card blue">
+            <div class="stat-ico blue">💰</div>
+            <div class="stat-val" id="statSpent">—</div>
+            <div class="stat-lbl">ចំណាយសរុប</div>
+          </div>
+        </div>
+
+        <!-- Recent Orders -->
+        <div class="card">
+          <div class="card-head">
+            <span>📋</span>
+            <span class="card-head-title">ការបញ្ជាទិញចុងក្រោយ</span>
+            <span class="card-head-sub" style="cursor:pointer;color:var(--rose)" onclick="navTo('orders')">មើលទាំងអស់ →</span>
+          </div>
+          <div class="card-body" id="recentOrdersBody">
+            <div class="loading-wrap"><div class="spinner"></div><div class="loading-txt">កំពុងផ្ទុក…</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ─── ORDERS PAGE ─── -->
+      <div class="page" id="page-orders">
+        <div class="sec-head">
+          <div class="sec-title">📦 ការបញ្ជាទិញរបស់ខ្ញុំ</div>
+          <div class="sec-sub">ប្រវត្តិការទិញទំនិញទាំងអស់</div>
+        </div>
+
+        <!-- Filter -->
+        <div class="card" style="margin-bottom:16px">
+          <div class="card-body" style="padding:14px 20px;display:flex;flex-wrap:wrap;gap:8px;align-items:center">
+            <span style="font-size:.78rem;font-weight:600;color:var(--txt2)">ស្ថានភាព:</span>
+            <button class="filter-btn active" data-filter="all">ទាំងអស់</button>
+            <button class="filter-btn" data-filter="pending">⏳ Pending</button>
+            <button class="filter-btn" data-filter="paid">✅ Paid</button>
+            <button class="filter-btn" data-filter="delivered">🚚 Delivered</button>
+            <button class="filter-btn" data-filter="cancelled">❌ Cancelled</button>
+          </div>
+        </div>
+
+        <style>
+        .filter-btn{
+          padding:5px 13px;background:transparent;
+          border:1.5px solid var(--bord2);border-radius:var(--r-full);
+          color:var(--txt2);font-size:.75rem;font-weight:500;cursor:pointer;
+          transition:all .15s;font-family:var(--font);
+        }
+        .filter-btn:hover{border-color:var(--rose-lt);color:var(--rose-dk)}
+        .filter-btn.active{
+          background:var(--rose);border-color:var(--rose);color:#fff;font-weight:600;
+        }
+        </style>
+
+        <div class="card">
+          <div class="card-body" style="padding:0" id="ordersTableBody">
+            <div class="loading-wrap"><div class="spinner"></div><div class="loading-txt">កំពុងផ្ទុក…</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ─── PROFILE PAGE ─── -->
+      <div class="page" id="page-profile">
+        <div class="sec-head">
+          <div class="sec-title">👤 ព័ត៌មានខ្ញុំ</div>
+          <div class="sec-sub">កែប្រែព័ត៌មានផ្ទាល់ខ្លួន</div>
+        </div>
+
+        <div class="card">
+          <div class="card-head">
+            <span>✏️</span>
+            <span class="card-head-title">Edit Profile</span>
+          </div>
+          <div class="card-body">
+            <div class="alert alert-success" id="profileSuccess">✅ រក្សាទុកបានជោគជ័យ!</div>
+            <div class="alert alert-error" id="profileError"></div>
+            <form id="profileForm" onsubmit="saveProfile(event)">
+              <div class="profile-grid">
+                <div class="form-group">
+                  <label class="form-label">ឈ្មោះ *</label>
+                  <input class="form-input" id="pName" type="text" placeholder="ឈ្មោះពេញ" required>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">អ៊ីមែល</label>
+                  <input class="form-input" id="pEmail" type="email" disabled style="opacity:.6;cursor:not-allowed">
+                  <span class="form-hint">📧 មិនអាចប្តូរអ៊ីមែលបានទេ</span>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">លេខទូរស័ព្ទ</label>
+                  <input class="form-input" id="pPhone" type="tel" placeholder="0xx-xxx-xxx">
+                </div>
+                <div class="form-group full">
+                  <label class="form-label">អាសយដ្ឋាន</label>
+                  <textarea class="form-input" id="pAddress" placeholder="ផ្ទះ, ភូមិ, ស្រុក, ខេត្ត"></textarea>
+                </div>
+              </div>
+              <div style="margin-top:18px">
+                <button type="submit" class="btn-save" id="btnSaveProfile">
+                  💾 រក្សាទុក
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <!-- Account Info -->
+        <div class="card">
+          <div class="card-head">
+            <span>ℹ️</span>
+            <span class="card-head-title">ព័ត៌មានគណនី</span>
+          </div>
+          <div class="card-body" style="padding:0">
+            <div class="detail-row" style="padding:12px 20px">
+              <span class="dl">User ID</span>
+              <span class="dv" id="infoId">—</span>
+            </div>
+            <div class="detail-row" style="padding:12px 20px">
+              <span class="dl">Role</span>
+              <span class="dv" id="infoRole">user</span>
+            </div>
+            <div class="detail-row" style="padding:12px 20px">
+              <span class="dl">Member Since</span>
+              <span class="dv" id="infoSince">—</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ─── PASSWORD PAGE ─── -->
+      <div class="page" id="page-password">
+        <div class="sec-head">
+          <div class="sec-title">🔐 ប្តូរលេខសំងាត់</div>
+          <div class="sec-sub">ការពារគណនីរបស់អ្នក</div>
+        </div>
+        <div class="card">
+          <div class="card-head">
+            <span>🔑</span>
+            <span class="card-head-title">Change Password</span>
+          </div>
+          <div class="card-body">
+            <div class="alert alert-success" id="pwSuccess">✅ ប្តូរលេខសំងាត់ជោគជ័យ!</div>
+            <div class="alert alert-error" id="pwError"></div>
+            <form id="pwForm" onsubmit="changePassword(event)" style="max-width:400px">
+              <div class="form-group" style="margin-bottom:14px">
+                <label class="form-label">លេខសំងាត់ថ្មី *</label>
+                <input class="form-input" id="pwNew" type="password" placeholder="minimum ៦ characters" required>
+              </div>
+              <div class="form-group" style="margin-bottom:18px">
+                <label class="form-label">បញ្ជាក់លេខសំងាត់ *</label>
+                <input class="form-input" id="pwConfirm" type="password" placeholder="ដូចគ្នានឹងខាងលើ" required>
+              </div>
+              <button type="submit" class="btn-save" id="btnChangePw">
+                🔐 ប្តូរលេខសំងាត់
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /content -->
+  </div><!-- /main -->
+</div><!-- /shell -->
+
+<!-- ─── ORDER DETAIL MODAL ─── -->
+<div class="modal-overlay" id="orderModal">
+  <div class="modal">
+    <div class="modal-head">
+      <span>📋</span>
+      <span class="modal-title">ព័ត៌មានការបញ្ជាទិញ</span>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body" id="modalBody"></div>
+  </div>
+</div>
+
+<script>
+// ─── CONFIG ────────────────────────────────────────── 
+// កែសម្រួលឱ្យស្គាល់ Server ស្វ័យប្រវត្តិ ទោះបីជាបើកតាម localhost ឬ IP
+const API = (window.location.protocol === 'file:') 
+  ? 'http://localhost:5000' 
+  : (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+    ? 'http://localhost:5000'
+    : 'https://choushop-api.up.railway.app';
+
+const SUPABASE_URL = 'https://qsvivebqzojojztmlogh.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFzdml2ZWJxem9qb3pqbXRsb2doIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYxMzgxODgsImV4cCI6MjA5MTcxNDE4OH0.3S1ORn9s70hwVbwEdVWXY19f07hzCb6L3Ul1skqIaYM';
+
+// ─── STATE ───────────────────────────────────────────
+let currentUser = null;
+let allOrders   = [];
+let currentFilter = 'all';
+
+// ─── INIT ─────────────────────────────────────────────
+async function init() {
+  const token = localStorage.getItem('kt_tok');
+  if (!token) { window.location.href = 'index.html'; return; }
+
+  try {
+    const res = await apiFetch('/api/user');
+    if (!res.success) { logout(); return; }
+    currentUser = res.user;
+    renderUser();
+    loadOrders();
+  } catch(e) {
+    showMsg('topbarSub','⚠️ មិនអាចភ្ជាប់ Server បានទេ');
+    console.error("Init Error:", e);
+  }
+}
+
+function renderUser() {
+  const u = currentUser;
+  const initial = (u.name||'U')[0].toUpperCase();
+  document.getElementById('sbAvatar').textContent = initial;
+  document.getElementById('sbName').textContent   = u.name || '—';
+  document.getElementById('sbEmail').textContent  = u.email || '—';
+  document.getElementById('wbName').textContent   = u.name  || 'User';
+
+  const since = u.created_at ? new Date(u.created_at).toLocaleDateString('km-KH') : '—';
+  document.getElementById('wbSince').textContent = since;
+
+  // Profile form
+  document.getElementById('pName').value    = u.name    || '';
+  document.getElementById('pEmail').value   = u.email   || '';
+  document.getElementById('pPhone').value   = u.phone   || '';
+  document.getElementById('pAddress').value = u.address || '';
+
+  // Info
+  document.getElementById('infoId').textContent    = '#' + u.id;
+  document.getElementById('infoRole').textContent  = u.role || 'user';
+  document.getElementById('infoSince').textContent = since;
+}
+
+// ─── FETCH HELPER ─────────────────────────────────────
+async function apiFetch(path, opts={}) {
+  const token = localStorage.getItem('kt_tok');
+  console.log(`🌐 Fetching: ${API}${path}`);
+  const res = await fetch(API + path, {
+    ...opts,
+    headers: {
+      'Content-Type':'application/json',
+      'Authorization': token ? 'Bearer '+token : '',
+      ...(opts.headers||{})
+    }
+  });
+  return res.json();
+}
+
+// ─── ORDERS ───────────────────────────────────────────
+async function loadOrders() {
+  try {
+    const res = await apiFetch('/api/orders');
+    if (res.success) {
+      console.log("📦 Orders received:", res.orders);
+      allOrders = res.orders || [];
+      renderStats();
+      renderRecentOrders();
+      renderOrdersTable(currentFilter);
+      updateBadge();
+    }
+  } catch(e) {
+    console.error("Load Orders Error:", e);
+    document.getElementById('recentOrdersBody').innerHTML = '<div class="empty"><div class="empty-ico">⚠️</div><div class="empty-title">មិនអាចផ្ទុកទិន្នន័យបានទេ</div></div>';
+  }
+}
+
+function renderStats() {
+  const total   = allOrders.length;
+  const paid    = allOrders.filter(o=>o.status==='paid').length;
+  const pending = allOrders.filter(o=>o.status==='pending').length;
+  const spent   = allOrders.filter(o=>o.status==='paid').reduce((s,o)=>s+(+o.total_amount),0);
+
+  document.getElementById('statTotal').textContent   = total;
+  document.getElementById('statPaid').textContent    = paid;
+  document.getElementById('statPending').textContent = pending;
+  document.getElementById('statSpent').textContent   = '$'+spent.toFixed(2);
+}
+
+function updateBadge() {
+  const pending = allOrders.filter(o=>o.status==='pending').length;
+  const badge = document.getElementById('orderBadge');
+  if (pending>0) { badge.textContent=pending; badge.style.display='flex'; }
+  else badge.style.display='none';
+  // notif dot
+  if (pending>0) document.getElementById('notifDot').classList.add('on');
+}
+
+function renderRecentOrders() {
+  const body = document.getElementById('recentOrdersBody');
+  const recent = allOrders.slice(0,5);
+  if (!recent.length) {
+    body.innerHTML = `<div class="empty">
+      <div class="empty-ico">🛍️</div>
+      <div class="empty-title">មិនទាន់មានការបញ្ជាទិញ</div>
+      <div class="empty-sub">ទៅរើសសំលៀកបំពាក់ និង​ ផ្លិតផ្សារ Beauty ពិសេស</div>
+      <button class="btn-start" onclick="window.location.href='index.html'">🌸 ចាប់ផ្តើមទិញ</button>
+    </div>`;
+    return;
+  }
+
+  body.innerHTML = `<div class="recent-orders">${recent.map(o=>`
+    <div class="ro-item" onclick="openOrder(${o.id})">
+      <div class="ro-ico">${getOrderIco(o)}</div>
+      <div class="ro-info">
+        <div class="ro-num">${o.order_number||o.bill_number||'#'+o.id}</div>
+        <div class="ro-items">${getItemsText(o.items)}</div>
+        <div class="ro-date">${fmtDate(o.created_at)}</div>
+      </div>
+      <div class="ro-right">
+        <div class="ro-amount">$${(+o.total_amount).toFixed(2)}</div>
+        <div style="margin-top:4px">${statusBadge(o.status)}</div>
+      </div>
+    </div>
+  `).join('')}</div>`;
+}
+
+function renderOrdersTable(filter) {
+  const body = document.getElementById('ordersTableBody');
+  let orders = filter==='all' ? allOrders : allOrders.filter(o=>o.status===filter);
+
+  if (!orders.length) {
+    body.innerHTML = `<div class="empty">
+      <div class="empty-ico">📭</div>
+      <div class="empty-title">គ្មានការបញ្ជាទិញ</div>
+      <div class="empty-sub">ស្ថានភាព "${filter}" គ្មានទំនិញ</div>
+    </div>`;
+    return;
+  }
+
+  body.innerHTML = `<div class="orders-wrap"><table class="orders-table">
+    <thead><tr>
+      <th>លេខ Order</th>
+      <th>ទំនិញ</th>
+      <th>ចំនួន</th>
+      <th>ស្ថានភាព</th>
+      <th>ថ្ងៃ</th>
+      <th></th>
+    </tr></thead>
+    <tbody>${orders.map(o=>`
+      <tr>
+        <td><div class="order-num">${o.order_number||o.bill_number||'#'+o.id}</div></td>
+        <td><div class="order-items-preview">${(o.items||[]).slice(0,2).map(i=>`<span class="order-item-tag">${i.icon||''} ${i.name}</span>`).join('')}${(o.items||[]).length>2?`<span class="order-item-tag">+${(o.items||[]).length-2}</span>`:''}</div></td>
+        <td><span class="amount-cell">$${(+o.total_amount).toFixed(2)}</span></td>
+        <td>${statusBadge(o.status)}</td>
+        <td><span class="date-cell">${fmtDate(o.created_at)}</span></td>
+        <td><button class="btn-view" onclick="openOrder(${o.id})">👁️ មើល</button></td>
+      </tr>
+    `).join('')}</tbody>
+  </table></div>`;
+}
+
+// ─── ORDER MODAL ──────────────────────────────────────
+function openOrder(id) {
+  const o = allOrders.find(x=>x.id===id);
+  if (!o) return;
+  const body = document.getElementById('modalBody');
+  const billNum = o.bill_number||o.order_number||'#'+o.id;
+  body.innerHTML = `
+    <div class="detail-row"><span class="dl">Order #</span><span class="dv">${billNum}</span></div>
+    <div class="detail-row"><span class="dl">ស្ថានភាព</span><span class="dv">${statusBadge(o.status)}</span></div>
+    ${o.delivery_status?`<div class="detail-row"><span class="dl">ការដឹកជញ្ជូន</span><span class="dv">${o.delivery_status}</span></div>`:''}
+    <div class="detail-row"><span class="dl">ការបង់ប្រាក់</span><span class="dv">💳 Bakong KHQR</span></div>
+    <div class="detail-row"><span class="dl">ថ្ងៃបញ្ជា</span><span class="dv">${fmtDate(o.created_at)}</span></div>
+    ${o.paid_at?`<div class="detail-row"><span class="dl">ថ្ងៃបង់ប្រាក់</span><span class="dv">${fmtDate(o.paid_at)}</span></div>`:''}
+
+    <div class="modal-items">
+      <div style="font-size:.72rem;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--mut);font-family:var(--mono);margin-bottom:10px">ទំនិញ (${(o.items||[]).length})</div>
+      ${(o.items||[]).map(i=>`
+        <div class="modal-item-row">
+          <span class="mi-ico">${i.icon||'🌸'}</span>
+          <span class="mi-name">${i.name}</span>
+          <span class="mi-qty">×${i.qty||1}</span>
+          <span class="mi-price">$${((+i.price)*(i.qty||1)).toFixed(2)}</span>
+        </div>
+      `).join('')}
+    </div>
+    <div class="modal-total">
+      <span class="mt-lbl">💰 សរុបទឹកប្រាក់</span>
+      <span class="mt-val">$${(+o.total_amount).toFixed(2)}</span>
+    </div>
+    ${o.status==='paid'?`
+      <button class="btn-invoice" onclick="window.open('${API}/api/invoice/${billNum}','_blank')">
+        🧾 Download Invoice
+      </button>
+    `:`
+      <button class="btn-invoice" disabled style="opacity:.4;background:var(--mut)">
+        🧾 Invoice (ត្រូវ Paid ជាមុន)
+      </button>
+    `}
+  `;
+  document.getElementById('orderModal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeModal() {
+  document.getElementById('orderModal').classList.remove('open');
+  document.body.style.overflow = '';
+}
+document.getElementById('orderModal').addEventListener('click',function(e){
+  if(e.target===this) closeModal();
+});
+
+// ─── PROFILE SAVE ─────────────────────────────────────
+async function saveProfile(e) {
+  e.preventDefault();
+  const btn = document.getElementById('btnSaveProfile');
+  btn.disabled=true; btn.textContent='💾 កំពុងរក្សាទុក…';
+  const name    = document.getElementById('pName').value.trim();
+  const phone   = document.getElementById('pPhone').value.trim();
+  const address = document.getElementById('pAddress').value.trim();
+  try {
+    const res = await apiFetch('/api/user/update', {
+      method:'PUT', body:JSON.stringify({name,phone,address})
+    });
+    if (res.success) {
+      currentUser = res.user;
+      renderUser();
+      showAlert('profileSuccess','profileError');
+    } else {
+      showAlert('profileError','profileSuccess',res.message||'Error');
+    }
+  } catch(err) {
+    showAlert('profileError','profileSuccess','Network error');
+  }
+  btn.disabled=false; btn.textContent='💾 រក្សាទុក';
+}
+
+// ─── CHANGE PASSWORD ──────────────────────────────────
+async function changePassword(e) {
+  e.preventDefault();
+  const pw1 = document.getElementById('pwNew').value;
+  const pw2 = document.getElementById('pwConfirm').value;
+  if (pw1.length<6) { showAlert('pwError','pwSuccess','លេខសំងាត់ minimum ៦ characters'); return; }
+  if (pw1!==pw2)   { showAlert('pwError','pwSuccess','លេខសំងាត់មិនដូចគ្នា'); return; }
+  const btn = document.getElementById('btnChangePw');
+  btn.disabled=true; btn.textContent='⏳ កំពុងប្តូរ…';
+  try {
+    const name = currentUser.name;
+    const res = await apiFetch('/api/user/update',{
+      method:'PUT', body:JSON.stringify({name, password:pw1})
+    });
+    if (res.success) {
+      document.getElementById('pwNew').value='';
+      document.getElementById('pwConfirm').value='';
+      showAlert('pwSuccess','pwError');
+    } else {
+      showAlert('pwError','pwSuccess',res.message||'Error');
+    }
+  } catch(err) {
+    showAlert('pwError','pwSuccess','Network error');
+  }
+  btn.disabled=false; btn.textContent='🔐 ប្តូរលេខសំងាត់';
+}
+
+// ─── NAV ──────────────────────────────────────────────
+const pageLabels = {
+  home:     { title:'🏠 ទំព័រដើម',         sub:'ស្ថានភាពការបញ្ជាទិញ និង ព័ត៌មានខ្លី' },
+  orders:   { title:'📦 ការបញ្ជាទិញ',      sub:'ប្រវត្តិការទិញទំនិញទាំងអស់' },
+  profile:  { title:'👤 ព័ត៌មានខ្ញុំ',     sub:'គ្រប់គ្រងព័ត៌មានផ្ទាល់ខ្លួន' },
+  password: { title:'🔐 លេខសំងាត់',        sub:'ការពារសុវត្ថិភាពគណនី' },
+};
+
+function navTo(page) {
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.sb-item').forEach(i=>i.classList.remove('active'));
+  document.getElementById('page-'+page).classList.add('active');
+  document.querySelector(`.sb-item[data-page="${page}"]`).classList.add('active');
+  const lbl = pageLabels[page]||{};
+  document.getElementById('topbarTitle').textContent = lbl.title||page;
+  document.getElementById('topbarSub').textContent   = lbl.sub||'';
+  // mobile close
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('overlayBg').classList.remove('show');
+  document.body.style.overflow='';
+}
+
+document.querySelectorAll('.sb-item').forEach(el=>{
+  el.addEventListener('click',()=>navTo(el.dataset.page));
+});
+
+// Filter buttons
+document.querySelectorAll('.filter-btn').forEach(btn=>{
+  btn.addEventListener('click',function(){
+    document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+    this.classList.add('active');
+    currentFilter = this.dataset.filter;
+    renderOrdersTable(currentFilter);
+  });
+});
+
+// ─── LOGOUT ───────────────────────────────────────────
+function logout() {
+  localStorage.removeItem('kt_tok');
+  localStorage.removeItem('kt_user');
+  window.location.href = 'index.html';
+}
+
+// ─── MOBILE SIDEBAR ───────────────────────────────────
+document.getElementById('mobToggle').onclick = function(){
+  document.getElementById('sidebar').classList.toggle('open');
+  document.getElementById('overlayBg').classList.toggle('show');
+  document.body.style.overflow = document.getElementById('sidebar').classList.contains('open')?'hidden':'';
+};
+document.getElementById('overlayBg').onclick = function(){
+  document.getElementById('sidebar').classList.remove('open');
+  this.classList.remove('show');
+  document.body.style.overflow='';
+};
+
+// ─── HELPERS ──────────────────────────────────────────
+function statusBadge(s) {
+  const map = {
+    pending  : 'badge-pending',
+    paid     : 'badge-paid',
+    cancelled: 'badge-cancelled',
+    delivered: 'badge-delivered',
+    refunded : 'badge-refunded',
+  };
+  const icons = { pending:'⏳',paid:'✅',cancelled:'❌',delivered:'🚚',refunded:'↩️' };
+  const cls = map[s]||'badge-pending';
+  return `<span class="badge ${cls}">${icons[s]||'•'} ${s||'—'}</span>`;
+}
+
+function getOrderIco(o) {
+  return (o.items&&o.items[0]&&o.items[0].icon) ? o.items[0].icon : '📦';
+}
+
+function getItemsText(items) {
+  if (!items||!items.length) return 'គ្មានទំនិញ';
+  const names = items.slice(0,2).map(i=>i.name).join(', ');
+  return items.length>2 ? names+` +${items.length-2}` : names;
+}
+
+function fmtDate(dt) {
+  if (!dt) return '—';
+  return new Date(dt).toLocaleDateString('km-KH',{year:'numeric',month:'short',day:'numeric'});
+}
+
+function showAlert(showId,hideId,msg) {
+  const s = document.getElementById(showId);
+  const h = document.getElementById(hideId);
+  if (msg) s.childNodes[0].textContent = (showId.includes('Error')?'❌ ':'✅ ')+msg;
+  s.classList.add('show');
+  h.classList.remove('show');
+  setTimeout(()=>s.classList.remove('show'),4000);
+}
+
+// Check login on page load
+(function checkAuth(){
+  const token = localStorage.getItem('kt_tok');
+  if (!token) window.location.href='index.html';
+})();
+
+// ─── START ────────────────────────────────────────────
+init();
+</script>
+</body>
+</html>
