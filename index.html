@@ -1998,13 +1998,20 @@ nav.scrolled{box-shadow:var(--sh-sm);border-color:var(--bord2)}
 <!-- TOAST -->
 <div class="tow" id="toastW"></div>
 
+<!-- SUPABASE SDK -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 'use strict';
 // ប្ដូរ URL ខាងក្រោមទៅតាម domain របស់ backend ដែលអ្នកបានបង្ហោះ (ឧទាហរណ៍លើ Railway)
 const SUPABASE_URL = 'https://qsvivebqzojojztmlogh.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFzdml2ZWJxem9qb3pqbXRsb2doIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYxMzgxODgsImV4cCI6MjA5MTcxNDE4OH0.3S1ORn9s70juVbwEdVWXY19f07hzCb6L3Ul1skqIaYM';
 
-const SRV = window.location.hostname === 'localhost' ? 'http://localhost:5000' : 'https://choushop-api.up.railway.app';
+// 初始化 Supabase Client
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+const SRV = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+  ? 'http://localhost:5000'
+  : 'https://choushop-main.vercel.app'; // ប្តូរទៅកាន់ Vercel URL បើមិនប្រើ Railway
 
 // ── STATE ──────────────────────────────────────────
 let PRODS = [];
@@ -2018,19 +2025,17 @@ let curProd = null, curImgIdx = 0, detailQty = 1, curCat = 'all';
 // *** Products load ពី MySQL Database តាម API ***
 async function loadProdsFromDB() {
   try {
-    const r = await fetch(`${SRV}/api/products`);
-    const d = await r.json();
-    if (d.success && Array.isArray(d.products)) {
-      PRODS = d.products.map(p => ({
+    // ទាញយកទិន្នន័យពី Supabase ដោយផ្ទាល់ (បូករួមទាំងផលិតផលដែល active)
+    const { data, error } = await sb.from('products').select('*').eq('active', true);
+    if (error) throw error;
+
+    if (data) {
+      PRODS = data.map(p => ({
         ...p,
-        // normalize field names for compatibility
-        cat    : p.category || p.cat || '',
-        old    : p.old_price || p.old || null,
-        rate   : p.rating   || p.rate || 0,
-        rv     : p.reviews  || p.rv  || 0,
-        desc   : p.description || p.desc || '',
-        specs  : Array.isArray(p.specs)  ? p.specs  : [],
-        images : Array.isArray(p.images) ? p.images : [],
+        cat: p.category, old: p.old_price, rate: p.rating, rv: p.reviews,
+        desc: p.description, 
+        specs: typeof p.specs === 'string' ? JSON.parse(p.specs) : p.specs,
+        images: typeof p.images === 'string' ? JSON.parse(p.images) : p.images
       }));
       return true;
     }
@@ -2336,7 +2341,7 @@ async function doLogin() {
       localStorage.setItem('kt_tok', d.token);
       updAuth(); closeAuth(); toast(`👋 ${d.user.name}`, 'ok');
     } else showMsg(msg, d.message||'ចូលបរាជ័យ', 'er');
-  } catch(e) { showMsg(msg, 'Server offline', 'er'); }
+  } catch(e) { console.error(e); showMsg(msg, 'Server offline (Backend unreachable)', 'er'); }
   btn.disabled = false; btn.textContent = 'ចូលគណនី';
 }
 async function doRegister() {
