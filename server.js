@@ -2,6 +2,7 @@
 //  server.js  —  NyKa Shop  Complete Backend  v4.1
 //  PostgreSQL · JWT Auth · Bakong KHQR · Telegram · Products
 // ════════════════════════════════════════════════════════════
+require('dotenv').config(); // ← ត្រូវដាក់ទី 1 គេ មុន require ផ្សេង!
 const express = require('express');
 const cors    = require('cors');
 const { Pool } = require('pg');
