@@ -1,0 +1,10 @@
+name = "choushop-backend"
+main = "server.js"
+compatibility_date = "2024-01-01"
+node_compat = true
+
+[vars]
+PORT = "5000"
+BAKONG_MERCHANT = "NyKa_Shop"
+BAKONG_CITY = "Kampong Chhnang"
+# ដាក់ Variables ផ្សេងៗទៀតក្នុង Cloudflare Dashboard ដើម្បីសុវត្ថិភាព
