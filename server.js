@@ -30,12 +30,25 @@ const JWT_SECRET = process.env.JWT_SECRET;
 const PORT       = process.env.PORT       || 5000;
 
 // ─── MIDDLEWARE ───────────────────────────────────────────────
+// កំណត់ឱ្យ Express ទុកចិត្ត Proxy របស់ Cloudflare ដើម្បីទទួលបាន IP ពិតរបស់ Customer
+app.set('trust proxy', true);
+
+const allowedOrigins = ['https://shopnyka.pages.dev', 'http://localhost:5000', 'http://127.0.0.1:5000'];
 app.use(cors({
-  origin: '*',
+  origin: function (origin, callback) {
+    // អនុញ្ញាតឱ្យរាល់ request ដែលគ្មាន origin (ដូចជា mobile apps) ឬមកពី domain ក្នុង list
+    if (!origin || allowedOrigins.indexOf(origin) !== -1 || origin.includes('.pages.dev')) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   methods: ['GET','POST','PUT','DELETE','OPTIONS','PATCH'],
-  allowedHeaders: ['Content-Type','Authorization']
+  allowedHeaders: ['Content-Type','Authorization'],
+  credentials: true
 }));
-app.options('*', cors()); // ជួយឱ្យគ្រប់ requests ទាំងអស់ដើរបានល្អ (Pre-flight)
+app.options('*', cors());
+
 // Increase limit for base64 images
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ extended: true, limit: '50mb' }));
