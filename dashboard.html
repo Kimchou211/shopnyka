@@ -774,6 +774,8 @@ textarea.form-input{height:80px;padding:12px 14px;resize:vertical}
   </div>
 </div>
 
+<!-- SUPABASE SDK -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 // ─── CONFIG ────────────────────────────────────────── 
 // កែសម្រួលឱ្យស្គាល់ Server ស្វ័យប្រវត្តិ ទោះបីជាបើកតាម localhost ឬ IP
@@ -781,10 +783,13 @@ const API = (window.location.protocol === 'file:')
   ? 'http://localhost:5000' 
   : (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
     ? 'http://localhost:5000'
-    : 'https://shopnyka.pages.dev/';
+    : 'https://your-api-backend.com'; // ⚠️ កែប្រែ URL នេះទៅតាម Domain Backend របស់អ្នក
 
 const SUPABASE_URL = 'https://qsvivebqzojojztmlogh.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFzdml2ZWJxem9qb3pqbXRsb2doIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYxMzgxODgsImV4cCI6MjA5MTcxNDE4OH0.3S1ORn9s70hwVbwEdVWXY19f07hzCb6L3Ul1skqIaYM';
+
+// 初始化 Supabase Client
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 // ─── STATE ───────────────────────────────────────────
 let currentUser = null;
@@ -849,10 +854,12 @@ async function apiFetch(path, opts={}) {
 // ─── ORDERS ───────────────────────────────────────────
 async function loadOrders() {
   try {
-    const res = await apiFetch('/api/orders');
-    if (res.success) {
-      console.log("📦 Orders received:", res.orders);
-      allOrders = res.orders || [];
+    // ទាញយក Orders របស់ User ពី Supabase ដោយផ្ទាល់
+    const { data, error } = await sb.from('orders').select('*, order_items(*)').eq('user_id', currentUser.id).order('created_at', { ascending: false });
+    if (error) throw error;
+
+    if (data) {
+      allOrders = data;
       renderStats();
       renderRecentOrders();
       renderOrdersTable(currentFilter);
