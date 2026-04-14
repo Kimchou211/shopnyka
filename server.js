@@ -2,16 +2,15 @@
 //  server.js  —  NyKa Shop  Complete Backend  v4.0
 //  MySQL · JWT Auth · Bakong KHQR · Telegram · Products DB
 // ════════════════════════════════════════════════════════════
-const express = require('express');
+const { Hono } = require('hono');
+const { cors } = require('hono/cors');
 const { Pool } = require('pg');
 const bcrypt  = require('bcryptjs');
 const jwt     = require('jsonwebtoken');
-const cors    = require('cors');
 const QRCode  = require('qrcode');
 const crypto  = require('crypto');
-require('dotenv').config();
 
-const app = express();
+const app = new Hono();
 
 // ─── CONFIG ──────────────────────────────────────────────────
 const BAKONG = {
@@ -30,28 +29,12 @@ const JWT_SECRET = process.env.JWT_SECRET;
 const PORT       = process.env.PORT       || 5000;
 
 // ─── MIDDLEWARE ───────────────────────────────────────────────
-// កំណត់ឱ្យ Express ទុកចិត្ត Proxy របស់ Cloudflare ដើម្បីទទួលបាន IP ពិតរបស់ Customer
-app.set('trust proxy', true);
-
-const allowedOrigins = ['https://shopnyka.pages.dev', 'http://localhost:5000', 'http://127.0.0.1:5000'];
-app.use(cors({
-  origin: function (origin, callback) {
-    // អនុញ្ញាតឱ្យរាល់ request ដែលគ្មាន origin (ដូចជា mobile apps) ឬមកពី domain ក្នុង list
-    if (!origin || allowedOrigins.indexOf(origin) !== -1 || origin.includes('.pages.dev')) {
-      callback(null, true);
-    } else {
-      callback(new Error('Not allowed by CORS'));
-    }
-  },
-  methods: ['GET','POST','PUT','DELETE','OPTIONS','PATCH'],
-  allowedHeaders: ['Content-Type','Authorization'],
-  credentials: true
+app.use('*', cors({
+  origin: ['https://shopnyka.pages.dev', 'http://localhost:5000'],
+  allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowHeaders: ['Content-Type', 'Authorization'],
+  credentials: true,
 }));
-app.options('*', cors());
-
-// Increase limit for base64 images
-app.use(express.json({ limit: '50mb' }));
-app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 
 // ─── DATABASE ─────────────────────────────────────────────────
 let db;
