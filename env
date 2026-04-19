@@ -5,7 +5,7 @@
 
 # ── DATABASE (Supabase) ──────────────────
 # ចងចាំ៖ ប្តូរ [yQtJ1dHvisgoFj1e] ទៅជា Password ដែលអ្នកបានកំណត់ក្នុង Supabase
-DATABASE_URL=postgresql://postgres.qsvivebqzojozjmtlogh:[yQtJ1dHvisgoFj1e]@aws-1-ap-northeast-1.pooler.supabase.com:6543/postgres?pgbouncer=true
+DATABASE_URL=postgresql://postgres.qsvivebqzojozjmtlogh:yQtJ1dHvisgoFj1e@aws-1-ap-northeast-1.pooler.supabase.com:6543/postgres?pgbouncer=true
 
 # ── SERVER ───────────────────────────────
 PORT=5000
